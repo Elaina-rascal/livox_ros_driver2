@@ -29,7 +29,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <pcl_conversions/pcl_conversions.h>
+#include <sensor_msgs/PointCloud2.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -166,7 +167,22 @@ typedef struct {
   uint8_t line;
   uint64_t offset_time;
 } PointXyzlt;
-
+struct EIGEN_ALIGN16 VelodynePoint {
+    PCL_ADD_POINT4D;
+    float intensity;
+    float time;
+    uint16_t ring;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  };
+}  // namespace velodyne_ros
+POINT_CLOUD_REGISTER_POINT_STRUCT( VelodynePoint::Point,
+    (float, x, x)
+    (float, y, y)
+    (float, z, z)
+    (float, intensity, intensity)
+    (float, time, time)
+    (uint16_t, ring, ring)
+)
 typedef struct {
   uint32_t handle;
   uint8_t lidar_type; ////refer to LivoxLidarType

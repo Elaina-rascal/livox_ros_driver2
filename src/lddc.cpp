@@ -197,7 +197,36 @@ void Lddc::PrepareExit(void) {
     lds_ = nullptr;
   }
 }
-
+void Lddc::PublishVelodynePointcloud2(LidarDataQueue *queue, uint8_t index)
+{
+   while(!QueueIsEmpty(queue)) {
+    StoragePacket pkg;
+    QueuePop(queue, &pkg);
+    if (pkg.points.empty()) {
+      printf("Publish point cloud2 failed, the pkg points is empty.\n");
+      continue;
+    }
+    uint64_t timestamp = 0;
+    pcl::PointCloud<VelodynePoint> PclCloud;
+    PointCloud2 cloud;
+    for (int i=0;i<pkg.points.size();i++)
+    {
+      VelodynePoint point;
+      point.x = pkg.points[i].x;
+      point.y = pkg.points[i].y;
+      point.z = pkg.points[i].z;
+      point.intensity = pkg.points[i].intensity;
+      point.ring = pkg.points[i].line;
+      PclCloud.push_back(point);
+    }
+    pcl::toROSMsg(PclCloud, cloud);
+    cloud.header.frame_id.assign(frame_id_);
+    cloud.header.stamp = rclcpp::Time(timestamp);
+    cloud.is_bigendian = false;
+    cloud.is_dense     = true;
+    PublishPointcloud2Data(index, timestamp, cloud);
+  }
+}
 void Lddc::PublishPointcloud2(LidarDataQueue *queue, uint8_t index) {
   while(!QueueIsEmpty(queue)) {
     StoragePacket pkg;
