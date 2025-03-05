@@ -162,11 +162,11 @@ typedef struct {
   float x;           // 偏移 0
   float y;           // 偏移 4
   float z;           // 偏移 8
-  uint8_t pad1[4];   // 填充到16字节 (8 + 4 + 4)
+  uint8_t pad1[4]={0};   // 填充到16字节 (8 + 4 + 4)
   float intensity;   // 偏移 16
   float time;        // 偏移 20
   std::uint16_t ring;// 偏移 24
-  uint8_t pad2[6];   // 填充到32字节 (24 + 2 + 6)
+  uint8_t pad2[6]={0};   // 填充到32字节 (24 + 2 + 6)
 } LivoxVelodynePoint;
 #pragma pack(pop)
 typedef struct {

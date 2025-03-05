@@ -344,8 +344,6 @@ void Lddc::InitPointcloud2Msg(const StoragePacket& pkg, PointCloud2& cloud, uint
     point.y = pkg.points[i].y;
     point.z = pkg.points[i].z;
     point.intensity = pkg.points[i].intensity;
-    point.pad1={0};
-    point.pad2={0};
     // point.tag = pkg.points[i].tag;
     point.ring = static_cast<std::uint16_t>(pkg.points[i].line);
     point.time = static_cast<float>(pkg.points[i].offset_time);
