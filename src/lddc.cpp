@@ -320,7 +320,7 @@ void Lddc::InitPointcloud2Msg(const StoragePacket& pkg, PointCloud2& cloud, uint
       cloud.header.stamp = rclcpp::Time(timestamp);
   #endif
 
-  std::vector<LivoxPointXyzrtlt> points;
+  std::vector<LivoxVelodynePoint> points;
   for (size_t i = 0; i < pkg.points_num; ++i) {
     // LivoxPointXyzrtlt point;
     LivoxVelodynePoint point;
@@ -333,8 +333,8 @@ void Lddc::InitPointcloud2Msg(const StoragePacket& pkg, PointCloud2& cloud, uint
     point.time = static_cast<float>(pkg.points[i].offset_time);
     points.push_back(std::move(point));
   }
-  cloud.data.resize(pkg.points_num * sizeof(LivoxPointXyzrtlt));
-  memcpy(cloud.data.data(), points.data(), pkg.points_num * sizeof(LivoxPointXyzrtlt));
+  cloud.data.resize(pkg.points_num * sizeof(LivoxVelodynePoint));
+  memcpy(cloud.data.data(), points.data(), pkg.points_num * sizeof(LivoxVelodynePoint));
 }
 
 void Lddc::PublishPointcloud2Data(const uint8_t index, const uint64_t timestamp, const PointCloud2& cloud) {
