@@ -222,6 +222,7 @@ void Lddc::PublishVelodynePointcloud2(LidarDataQueue *queue, uint8_t index)
     }
     pcl::toROSMsg(PclCloud, cloud);
     cloud.header.frame_id.assign(frame_id_);
+    timestamp = pkg.base_time;
     cloud.header.stamp = rclcpp::Time(timestamp);
     cloud.is_bigendian = false;
     cloud.is_dense     = true;
