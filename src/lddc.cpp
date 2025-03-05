@@ -168,6 +168,7 @@ void Lddc::PollingLidarPointCloudData(uint8_t index, LidarDevice *lidar) {
   while (!lds_->IsRequestExit() && !QueueIsEmpty(p_queue)) {
     if (kPointCloud2Msg == transfer_format_) {
       PublishPointcloud2(p_queue, index);
+      //PublishVelodynePointcloud2(p_queue, index);
     } else if (kLivoxCustomMsg == transfer_format_) {
       PublishCustomPointcloud(p_queue, index);
     } else if (kPclPxyziMsg == transfer_format_) {
@@ -197,7 +198,37 @@ void Lddc::PrepareExit(void) {
     lds_ = nullptr;
   }
 }
-
+void Lddc::PublishVelodynePointcloud2(LidarDataQueue *queue, uint8_t index)
+{
+   while(!QueueIsEmpty(queue)) {
+    StoragePacket pkg;
+    QueuePop(queue, &pkg);
+    if (pkg.points.empty()) {
+      printf("Publish point cloud2 failed, the pkg points is empty.\n");
+      continue;
+    }
+    uint64_t timestamp = 0;
+    pcl::PointCloud<VelodynePoint> PclCloud;
+    PointCloud2 cloud;
+    for (size_t i = 0; i < pkg.points_num; ++i)
+    {
+      VelodynePoint point;
+      point.x = pkg.points[i].x;
+      point.y = pkg.points[i].y;
+      point.z = pkg.points[i].z;
+      point.intensity = pkg.points[i].intensity;
+      point.ring = pkg.points[i].line;
+      PclCloud.push_back(point);
+    }
+    pcl::toROSMsg(PclCloud, cloud);
+    cloud.header.frame_id.assign(frame_id_);
+    timestamp = pkg.base_time;
+    cloud.header.stamp = rclcpp::Time(timestamp);
+    cloud.is_bigendian = false;
+    cloud.is_dense     = true;
+    PublishPointcloud2Data(index, timestamp, cloud);
+  }
+}
 void Lddc::PublishPointcloud2(LidarDataQueue *queue, uint8_t index) {
   while(!QueueIsEmpty(queue)) {
     StoragePacket pkg;
@@ -288,6 +319,7 @@ void Lddc::InitPointcloud2MsgHeader(PointCloud2& cloud) {
   cloud.fields[4].offset = 16;
   cloud.fields[4].name = "time";
   cloud.fields[4].count = 1;
+
   cloud.fields[4].datatype = PointField::FLOAT32;  // 修正数据类型
 
   cloud.fields[5].offset = 20;
@@ -296,6 +328,7 @@ void Lddc::InitPointcloud2MsgHeader(PointCloud2& cloud) {
   cloud.fields[5].datatype = PointField::UINT16;  // 修正数据类型
 
   cloud.point_step = sizeof(LivoxVelodynePoint);  // 修正 point_step 计算
+
 }
 
 

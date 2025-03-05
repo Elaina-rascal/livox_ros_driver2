@@ -29,7 +29,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <pcl_conversions/pcl_conversions.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -308,4 +309,20 @@ std::string ReplacePeriodByUnderline(std::string str);
 
 } // namespace livox_ros
 
+struct EIGEN_ALIGN16 VelodynePoint {
+      PCL_ADD_POINT4D;
+      float intensity;
+      float time;
+      uint16_t ring;
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+};
+
+POINT_CLOUD_REGISTER_POINT_STRUCT(VelodynePoint,
+    (float, x, x)
+    (float, y, y)
+    (float, z, z)
+    (float, intensity, intensity)
+    (float, time, time)
+    (uint16_t, ring, ring)
+)
 #endif // LIVOX_ROS_DRIVER2_COMM_H_
