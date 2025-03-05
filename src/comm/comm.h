@@ -157,14 +157,18 @@ typedef struct {
   uint8_t line;       /**< Laser line id     */
   double timestamp;   /**< Timestamp of point*/
 } LivoxPointXyzrtlt;
-typedef struct{
-  float x;
-  float y;
-  float z;
-  float intensity;
-  float time;
-  std::uint16_t ring;
+#pragma pack(push, 1) // 确保紧密排列
+typedef struct {
+  float x;           // 偏移 0
+  float y;           // 偏移 4
+  float z;           // 偏移 8
+  uint8_t pad1[4];   // 填充到16字节 (8 + 4 + 4)
+  float intensity;   // 偏移 16
+  float time;        // 偏移 20
+  std::uint16_t ring;// 偏移 24
+  uint8_t pad2[6];   // 填充到32字节 (24 + 2 + 6)
 } LivoxVelodynePoint;
+#pragma pack(pop)
 typedef struct {
   float x;
   float y;
