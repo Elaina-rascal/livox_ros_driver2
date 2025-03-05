@@ -156,7 +156,14 @@ typedef struct {
   uint8_t line;       /**< Laser line id     */
   double timestamp;   /**< Timestamp of point*/
 } LivoxPointXyzrtlt;
-
+typedef struct{
+  float x;
+  float y;
+  float z;
+  float intensity;
+  float time;
+  std::uint16_t ring;
+} LivoxVelodynePoint;
 typedef struct {
   float x;
   float y;
