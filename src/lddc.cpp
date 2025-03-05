@@ -210,7 +210,7 @@ void Lddc::PublishVelodynePointcloud2(LidarDataQueue *queue, uint8_t index)
     uint64_t timestamp = 0;
     pcl::PointCloud<VelodynePoint> PclCloud;
     PointCloud2 cloud;
-    for (int i=0;i<pkg.points.size();i++)
+    for (size_t i = 0; i < pkg.points_num; ++i)
     {
       VelodynePoint point;
       point.x = pkg.points[i].x;
