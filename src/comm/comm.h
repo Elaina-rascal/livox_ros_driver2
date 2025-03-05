@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pcl_conversions/pcl_conversions.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
