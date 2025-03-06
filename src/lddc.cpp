@@ -167,8 +167,8 @@ void Lddc::PollingLidarPointCloudData(uint8_t index, LidarDevice *lidar) {
 
   while (!lds_->IsRequestExit() && !QueueIsEmpty(p_queue)) {
     if (kPointCloud2Msg == transfer_format_) {
-      PublishPointcloud2(p_queue, index);
-      //PublishVelodynePointcloud2(p_queue, index);
+      // PublishPointcloud2(p_queue, index);
+      PublishVelodynePointcloud2(p_queue, index);
     } else if (kLivoxCustomMsg == transfer_format_) {
       PublishCustomPointcloud(p_queue, index);
     } else if (kPclPxyziMsg == transfer_format_) {
@@ -210,15 +210,29 @@ void Lddc::PublishVelodynePointcloud2(LidarDataQueue *queue, uint8_t index)
     uint64_t timestamp = 0;
     pcl::PointCloud<VelodynePoint> PclCloud;
     PointCloud2 cloud;
-    for (size_t i = 0; i < pkg.points_num; ++i)
-    {
-      VelodynePoint point;
-      point.x = pkg.points[i].x;
-      point.y = pkg.points[i].y;
-      point.z = pkg.points[i].z;
-      point.intensity = pkg.points[i].intensity;
-      point.ring = pkg.points[i].line;
-      PclCloud.push_back(point);
+    // for (size_t i = 0; i < pkg.points_num; ++i)
+    // {
+    //   VelodynePoint point;
+    //   point.x = pkg.points[i].x;
+    //   point.y = pkg.points[i].y;
+    //   point.z = pkg.points[i].z;
+    //   point.intensity = pkg.points[i].intensity;
+    //   point.ring = pkg.points[i].line;
+    //   PclCloud.push_back(std::move(point));
+    // }
+    // 预分配内存避免多次扩容
+    PclCloud.reserve(pkg.points_num);
+
+    // 直接使用迭代器避免多次查表
+    const auto& points = pkg.points;
+    for (const auto& p : points) {
+      PclCloud.emplace_back();
+      auto& point = PclCloud.back();
+      point.x = p.x;
+      point.y = p.y;
+      point.z = p.z;
+      point.intensity = p.intensity;
+      point.ring = p.line;
     }
     pcl::toROSMsg(PclCloud, cloud);
     cloud.header.frame_id.assign(frame_id_);
